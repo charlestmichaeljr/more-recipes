@@ -29,4 +29,8 @@ public class Category {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Set<Recipe> getRecipes() {
+        return recipes;
+    }
 }
