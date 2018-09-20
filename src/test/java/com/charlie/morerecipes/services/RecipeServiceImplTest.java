@@ -9,9 +9,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,7 +32,7 @@ public class RecipeServiceImplTest {
     }
 
     @Test
-    public void getRecipes() {
+    public void getRecipes() throws Exception{
         Recipe recipe = new Recipe();
         recipe.setDescription("Crispy Tacos");
         HashSet recipesData = new HashSet();
@@ -43,5 +45,18 @@ public class RecipeServiceImplTest {
         assertEquals(1,recipes.size());
         verify(recipeRepository,times(1)).findAll();
         assertEquals("Crispy Tacos", recipes.iterator().next().getDescription());
+    }
+
+    public void getRecipeByIdTest() throws Exception{
+        Recipe recipe = new Recipe();
+        recipe.setDescription("Crispy Tacos");
+        Optional<Recipe> optionalRecipe = Optional.of(recipe);
+
+        when(recipeService.findById(anyInt())).thenReturn(recipe);
+
+        Recipe recipeReturned = recipeService.findById(1);
+
+        assertNotNull(recipeReturned);
+        verify(recipeRepository,times(1)).findById(1);
     }
 }
