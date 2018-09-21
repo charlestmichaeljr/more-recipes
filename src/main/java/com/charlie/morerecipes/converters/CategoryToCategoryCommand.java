@@ -3,7 +3,9 @@ package com.charlie.morerecipes.converters;
 import com.charlie.morerecipes.commands.CategoryCommand;
 import com.charlie.morerecipes.domain.Category;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CategoryToCategoryCommand implements Converter<Category, CategoryCommand> {
     @Override
     public CategoryCommand convert(Category source) {

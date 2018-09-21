@@ -3,7 +3,9 @@ package com.charlie.morerecipes.converters;
 import com.charlie.morerecipes.commands.RecipeCommand;
 import com.charlie.morerecipes.domain.Recipe;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RecipeToRecipeCommand implements Converter<Recipe, RecipeCommand> {
 
     private final NotesToNotesCommand notesConverter;

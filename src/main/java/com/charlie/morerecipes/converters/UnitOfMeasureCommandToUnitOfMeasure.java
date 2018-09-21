@@ -3,7 +3,9 @@ package com.charlie.morerecipes.converters;
 import com.charlie.morerecipes.commands.UnitOfMeasureCommand;
 import com.charlie.morerecipes.domain.UnitOfMeasure;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UnitOfMeasureCommandToUnitOfMeasure implements Converter<UnitOfMeasureCommand,UnitOfMeasure> {
 
     @Override

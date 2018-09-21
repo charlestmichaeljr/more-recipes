@@ -3,7 +3,9 @@ package com.charlie.morerecipes.converters;
 import com.charlie.morerecipes.commands.NotesCommand;
 import com.charlie.morerecipes.domain.Notes;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
+@Component
 public class NotesToNotesCommand implements Converter<Notes, NotesCommand> {
     @Override
     public NotesCommand convert(Notes source) {
