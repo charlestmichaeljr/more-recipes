@@ -1,13 +1,11 @@
 package com.charlie.morerecipes.controllers;
 
+import com.charlie.morerecipes.commands.RecipeCommand;
 import com.charlie.morerecipes.domain.Recipe;
 import com.charlie.morerecipes.services.RecipeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -21,14 +19,28 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @RequestMapping(value = "/recipe/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "/recipe/{id}/show",method = RequestMethod.GET)
     public String getRecipeById(@PathVariable String id, Model model) {
-        model.addAttribute("recipe", recipeService.findById(Integer.parseInt(id)));
+        model.addAttribute("recipe", recipeService.findCommandById(Integer.parseInt(id)));
         return "/recipe/show";
     }
 
-    @RequestMapping(value="/recipe/{id}",method = RequestMethod.POST)
-    public String addRecipe(@PathVariable String id, @RequestBody Object formInfo) {
-        return "/recipe/show";
+    @RequestMapping("/recipe/new")
+    public String newRecipe(Model model) {
+        model.addAttribute("recipe",new RecipeCommand());
+        return "/recipe/recipeform";
+    }
+
+    @RequestMapping(value="/recipe",method = RequestMethod.POST)
+    public String saveOrUpdate(@ModelAttribute RecipeCommand recipeCommand) {
+        RecipeCommand savedRecipe = recipeService.saveRecipeCommand(recipeCommand);
+
+        return "redirect:/recipe/" + savedRecipe.getId() + "/show" ;
+    }
+
+    @RequestMapping("/recipe/{id}/update")
+    public String getRecipeUpdateForm(@PathVariable String id,Model model) {
+        model.addAttribute("recipe",recipeService.findCommandById(Integer.parseInt(id)));
+        return  "/recipe/recipeform";
     }
 }

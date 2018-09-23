@@ -1,5 +1,6 @@
 package com.charlie.morerecipes.services;
 
+import com.charlie.morerecipes.commands.RecipeCommand;
 import com.charlie.morerecipes.converters.RecipeCommandToRecipe;
 import com.charlie.morerecipes.converters.RecipeToRecipeCommand;
 import com.charlie.morerecipes.domain.Recipe;
@@ -55,13 +56,13 @@ public class RecipeServiceImplTest {
     }
 
     public void getRecipeByIdTest() throws Exception{
-        Recipe recipe = new Recipe();
+        RecipeCommand recipe = new RecipeCommand();
         recipe.setDescription("Crispy Tacos");
-        Optional<Recipe> optionalRecipe = Optional.of(recipe);
+        Optional<RecipeCommand> optionalRecipe = Optional.of(recipe);
 
-        when(recipeService.findById(anyInt())).thenReturn(recipe);
+        when(recipeService.findCommandById(anyInt())).thenReturn(recipe);
 
-        Recipe recipeReturned = recipeService.findById(1);
+        RecipeCommand recipeReturned = recipeService.findCommandById(1);
 
         assertNotNull(recipeReturned);
         verify(recipeRepository,times(1)).findById(1);

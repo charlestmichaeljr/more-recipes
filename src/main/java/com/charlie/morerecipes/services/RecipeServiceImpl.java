@@ -38,7 +38,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe findById(Integer id) {
+    public RecipeCommand findCommandById(Integer id) {
         Optional<Recipe> recipeOptional;
 
         recipeOptional = recipeRepository.findById(id);
@@ -46,7 +46,7 @@ public class RecipeServiceImpl implements RecipeService {
             throw new RuntimeException("Recipe not found");
         }
 
-        return recipeOptional.get();
+        return recipeToRecipeCommand.convert(recipeOptional.get());
     }
 
     @Override

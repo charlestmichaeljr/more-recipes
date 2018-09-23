@@ -23,7 +23,8 @@
     </style>
 </head>
 <body>
-<!--/*@thymesVar id="recipe" type="com.charlie.morerecipes.domain.Recipe"*/-->
+<!--/*@thymesVar id="recipe" type="com.charlie.morerecipes.commands.RecipeCommand"*/-->
+<!--/*@thymesVar id="ingredient" type="com.charlie.morerecipes.commands.IngredientCommand"*/-->
 <div class="container-fluid" style="margin-top: 20px">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
@@ -98,7 +99,7 @@
                             <div class="col-md-12">
                                 <ul>
                                     <li th:each="ingredient : ${recipe.ingredients}"
-                                        th:text="${(ingredient.getAmount() + ' ' + ingredient.getUom().getDescription() + ' - ' + ingredient.getDescription())}">1 Cup of milk</li>
+                                        th:text="${(ingredient.getAmount() + ' ' + ingredient.getUnitOfMeasure().getDescription() + ' - ' + ingredient.getDescription())}">1 Cup of milk</li>
                                     <li th:remove="all">1 Teaspoon of chocolate</li>
                                     <li th:remove="all">1 Teaspoon of Sugar</li>
                                 </ul>
