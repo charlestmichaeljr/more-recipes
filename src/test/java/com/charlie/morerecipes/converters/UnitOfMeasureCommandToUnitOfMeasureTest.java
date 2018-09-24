@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class UnitOfMeasureCommandToUnitOfMeasureTest {
 
     public static final String DESCRIPTION = "description";
-    public static final Integer INTEGER_VALUE = 1;
+    public static final Long INTEGER_VALUE = 1L;
 
     UnitOfMeasureCommandToUnitOfMeasure converter;
 

@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 public class NotesCommandToNotesTest {
 
-    public static final Integer INTEGER_VALUE = 1;
+    public static final Long INTEGER_VALUE = 1L;
     public static final BigDecimal BIG_DECIMAL_VALUE = BigDecimal.valueOf(30l);
     public static final String DESCRIPTION = "description";
     public static final String NOTES_VALUE = "Now is the time for all good men";

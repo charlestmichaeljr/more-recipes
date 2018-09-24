@@ -92,7 +92,8 @@
                 </div>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h1 class="panel-title" >Ingredients</h1>
+                        <span class="panel-title" >Ingredients</span>
+                        <a class="btn btn-default pull-right" th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" href="#" role="button">View</a>
                     </div>
                     <div class="panel-body">
                         <div class="row">

@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class RecipeCommand {
 
-    private Integer id;
+    private Long id;
     private String description;
     private Integer prepTime;
     private Integer cookTime;
@@ -27,11 +27,11 @@ public class RecipeCommand {
     public RecipeCommand() {
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

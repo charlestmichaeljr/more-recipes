@@ -6,15 +6,15 @@ import javax.persistence.*;
 
 public class NotesCommand {
 
-    private Integer Id;
+    private Long Id;
     private RecipeCommand recipe;
     private String recipeNotes;
 
-    public Integer getId() {
+    public Long getId() {
         return Id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         Id = id;
     }
 

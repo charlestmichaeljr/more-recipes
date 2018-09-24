@@ -1,8 +1,6 @@
 package com.charlie.morerecipes.controllers;
 
 import com.charlie.morerecipes.commands.RecipeCommand;
-import com.charlie.morerecipes.domain.Recipe;
-import com.charlie.morerecipes.services.RecipeService;
 import com.charlie.morerecipes.services.RecipeServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,23 +8,23 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.ui.Model;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class RecipeControllerTest {
 
     RecipeController recipeController;
+
+    MockMvc mockMvc;
 
     @Mock
     RecipeServiceImpl recipeService;
@@ -35,16 +33,15 @@ public class RecipeControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         recipeController = new RecipeController(recipeService);
+        mockMvc = MockMvcBuilders.standaloneSetup(recipeController).build();
     }
 
     @Test
     public void getRecipeById() throws Exception {
         RecipeCommand recipe = new RecipeCommand();
-        recipe.setId(1);
+        recipe.setId(1L);
 
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recipeController).build();
-
-        when(recipeService.findCommandById(anyInt())).thenReturn(recipe);
+        when(recipeService.findCommandById(anyLong())).thenReturn(recipe);
 
         mockMvc.perform(get("/recipe/1/show"))
                 .andExpect(status().isOk())
@@ -56,8 +53,6 @@ public class RecipeControllerTest {
     @Test
     public void testGetNewRecipeForm() throws Exception {
 
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recipeController).build();
-
         mockMvc.perform(get("/recipe/new"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("recipe"))
@@ -68,11 +63,9 @@ public class RecipeControllerTest {
     public void testSaveRecipeFormData() throws Exception {
 
         RecipeCommand recipeCommand = new RecipeCommand();
-        recipeCommand.setId(2);
+        recipeCommand.setId(2L);
 
         when(recipeService.saveRecipeCommand(any(RecipeCommand.class))).thenReturn(recipeCommand);
-
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recipeController).build();
 
         mockMvc.perform(post("/recipe/")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -86,16 +79,23 @@ public class RecipeControllerTest {
     @Test
     public void testgetUpdateView() throws Exception {
         RecipeCommand recipeCommand = new RecipeCommand();
-        recipeCommand.setId(2);
+        recipeCommand.setId(2L);
 
-        when(recipeService.findCommandById(anyInt())).thenReturn(recipeCommand);
-
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recipeController).build();
+        when(recipeService.findCommandById(anyLong())).thenReturn(recipeCommand);
 
         mockMvc.perform(get("/recipe/1/update"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/recipe/recipeform"))
                 .andExpect(model().attributeExists("recipe"));
 
+    }
+
+    @Test
+    public void testDeleteAction() throws Exception {
+        mockMvc.perform(get("/recipe/1/delete"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/"));
+
+        verify(recipeService,times(1)).deleteById(anyLong());
     }
 }

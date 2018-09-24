@@ -16,9 +16,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RecipeServiceImplTest {
 
@@ -55,16 +53,51 @@ public class RecipeServiceImplTest {
         assertEquals("Crispy Tacos", recipes.iterator().next().getDescription());
     }
 
-    public void getRecipeByIdTest() throws Exception{
-        RecipeCommand recipe = new RecipeCommand();
-        recipe.setDescription("Crispy Tacos");
-        Optional<RecipeCommand> optionalRecipe = Optional.of(recipe);
 
-        when(recipeService.findCommandById(anyInt())).thenReturn(recipe);
+    @Test
+    public void getRecipeByIdTest() throws Exception {
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
 
-        RecipeCommand recipeReturned = recipeService.findCommandById(1);
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
 
-        assertNotNull(recipeReturned);
-        verify(recipeRepository,times(1)).findById(1);
+        Recipe recipeReturned = recipeService.findById(1L);
+
+        assertNotNull("Null recipe returned", recipeReturned);
+        verify(recipeRepository, times(1)).findById(anyLong());
+        verify(recipeRepository, never()).findAll();
+    }
+
+    @Test
+    public void getRecipeCommandByIdTest() throws Exception {
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(1L);
+
+        when(recipeToRecipeCommand.convert(any())).thenReturn(recipeCommand);
+
+        RecipeCommand commandById = recipeService.findCommandById(1L);
+
+        assertNotNull("Null recipe returned", commandById);
+        verify(recipeRepository, times(1)).findById(anyLong());
+        verify(recipeRepository, never()).findAll();
+    }
+
+
+    @Test
+    public void deleteRecipeByIdTest() throws Exception {
+        // given
+        Long id = new Long(1L);
+        // when
+        recipeService.deleteById(id);
+        // then
+        verify(recipeRepository,times(1)).deleteById(anyLong());
+
     }
 }

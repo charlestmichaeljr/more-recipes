@@ -14,7 +14,7 @@ public class RecipeToRecipeCommandTest {
 
     RecipeToRecipeCommand recipeConverter;
 
-    public static final Integer RECIPE_ID = 1;
+    public static final Long RECIPE_ID = 1L;
     public static final Integer COOK_TIME = Integer.valueOf("5");
     public static final Integer PREP_TIME = Integer.valueOf("7");
     public static final String DESCRIPTION = "My Recipe";
@@ -23,11 +23,11 @@ public class RecipeToRecipeCommandTest {
     public static final Integer SERVINGS = Integer.valueOf("3");
     public static final String SOURCE = "Source";
     public static final String URL = "Some URL";
-    public static final Integer CAT_ID_1 = 1;
-    public static final Integer CAT_ID2 = 2;
-    public static final Integer INGRED_ID_1 = 3;
-    public static final Integer INGRED_ID_2 = 4;
-    public static final Integer NOTES_ID = 9;
+    public static final Long CAT_ID_1 = 1L;
+    public static final Long CAT_ID2 = 2L;
+    public static final Long INGRED_ID_1 = 3L;
+    public static final Long INGRED_ID_2 = 4L;
+    public static final Long NOTES_ID = 9L;
 
     @Before
     public void setUp() throws Exception {
