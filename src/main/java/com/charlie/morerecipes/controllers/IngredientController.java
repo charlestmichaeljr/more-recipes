@@ -6,6 +6,7 @@ import com.charlie.morerecipes.commands.UnitOfMeasureCommand;
 import com.charlie.morerecipes.services.IngredientService;
 import com.charlie.morerecipes.services.RecipeService;
 import com.charlie.morerecipes.services.UnitOfMeasureService;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,6 +65,22 @@ public class IngredientController {
         IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command);
 
         return "redirect:/recipe/" + savedCommand.getRecipeId() + "/ingredient/" + savedCommand.getId() + "/show";
+    }
+
+    @RequestMapping(value = "/recipe/{recipeId}/ingredient/new",method = RequestMethod.GET)
+    public String newRecipe(@PathVariable String recipeId, Model model) {
+        RecipeCommand recipeCommand = recipeService.findCommandById(Long.valueOf(recipeId));
+
+        IngredientCommand ingredientCommand = new IngredientCommand();
+        ingredientCommand.setRecipeId(Long.valueOf(recipeId));
+
+        ingredientCommand.setUnitOfMeasure(new UnitOfMeasureCommand());
+        model.addAttribute("ingredient",ingredientCommand);
+
+        Set<UnitOfMeasureCommand> uoms = unitOfMeasureService.listAllUoms();
+        model.addAttribute("uomList",uoms);
+
+        return "/recipe/ingredient/ingredientform";
     }
 
 

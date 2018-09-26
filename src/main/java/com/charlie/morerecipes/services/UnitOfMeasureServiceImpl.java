@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
@@ -22,8 +24,11 @@ public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
     @Override
     public Set<UnitOfMeasureCommand> listAllUoms() {
 
-        Set<UnitOfMeasureCommand> uoms = new HashSet<>();
+        return StreamSupport.stream(unitOfMeasureRepository.findAll().spliterator(),false)
+                .map(unitOfMeasure -> unitOfMeasureToUnitOfMeasureCommand.convert(unitOfMeasure))
+                .collect(Collectors.toSet());
+       /* Set<UnitOfMeasureCommand> uoms = new HashSet<>();
         unitOfMeasureRepository.findAll().forEach(unitOfMeasure -> uoms.add(unitOfMeasureToUnitOfMeasureCommand.convert(unitOfMeasure)));
-        return uoms;
+        return uoms;*/
     }
 }

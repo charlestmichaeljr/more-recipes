@@ -25,7 +25,8 @@
             <div class="panel panel-primary">
 
                 <div class="panel-heading">
-                    <h1 class="panel-title">Ingredients</h1>
+                    <span class="panel-title">Ingredients</span>
+                    <a class="btn btn-default pull-right" th:text="Add" href="#" th:href="'/recipe/' + ${recipe.id} + '/ingredient/new'">New</a>
                 </div>
                 <div class="panel-body">
 
