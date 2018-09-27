@@ -25,15 +25,18 @@ public class IngredientServiceImpl implements IngredientService {
     IngredientToIngredientCommand ingredientToIngredientCommand;
     IngredientCommandToIngredient ingredientCommandToIngredient;
     UnitOfMeasureRepository unitOfMeasureRepository;
+    RecipeToRecipeCommand recipeToRecipeCommand;
 
     public IngredientServiceImpl(RecipeRepository recipeRepository,
                                  IngredientToIngredientCommand ingredientToIngredientCommand,
                                  IngredientCommandToIngredient ingredientCommandToIngredient,
-                                 UnitOfMeasureRepository unitOfMeasureRepository) {
+                                 UnitOfMeasureRepository unitOfMeasureRepository,
+                                 RecipeToRecipeCommand recipeToRecipeCommand) {
         this.recipeRepository = recipeRepository;
         this.ingredientToIngredientCommand = ingredientToIngredientCommand;
         this.ingredientCommandToIngredient = ingredientCommandToIngredient;
         this.unitOfMeasureRepository = unitOfMeasureRepository;
+        this.recipeToRecipeCommand = recipeToRecipeCommand;
     }
 
     @Override
@@ -109,5 +112,33 @@ public class IngredientServiceImpl implements IngredientService {
         }
 
         return ingredientToIngredientCommand.convert(savedIngredientOptional.get());
+    }
+
+    @Override
+    public void deleteById(Long recipeId,Long ingredientId) {
+        Optional<Recipe> optionalRecipe =  recipeRepository.findById(recipeId);
+        Recipe recipe = null;
+        Recipe savedRecipe = null;
+
+        if(!optionalRecipe.isPresent()) {
+            log.error("Recipe not found!!");
+        }
+        else {
+            recipe = optionalRecipe.get();
+            Optional<Ingredient> optionalIngredient = recipe.getIngredients().stream()
+                    .filter(ingredient -> ingredient.getId().equals(ingredientId))
+                    .findFirst();
+
+            if(!optionalIngredient.isPresent()) {
+                log.error("Ingredient not found");
+            }
+            else
+            {
+                Ingredient ingredientToDelete = optionalIngredient.get();
+                ingredientToDelete.setRecipe(null);
+                recipe.getIngredients().remove(ingredientToDelete);
+                savedRecipe = recipeRepository.save(recipe);
+            }
+        }
     }
 }

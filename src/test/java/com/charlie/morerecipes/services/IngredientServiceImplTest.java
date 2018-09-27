@@ -2,10 +2,7 @@ package com.charlie.morerecipes.services;
 
 import com.charlie.morerecipes.commands.IngredientCommand;
 import com.charlie.morerecipes.commands.UnitOfMeasureCommand;
-import com.charlie.morerecipes.converters.IngredientCommandToIngredient;
-import com.charlie.morerecipes.converters.IngredientToIngredientCommand;
-import com.charlie.morerecipes.converters.UnitOfMeasureCommandToUnitOfMeasure;
-import com.charlie.morerecipes.converters.UnitOfMeasureToUnitOfMeasureCommand;
+import com.charlie.morerecipes.converters.*;
 import com.charlie.morerecipes.domain.Ingredient;
 import com.charlie.morerecipes.domain.Recipe;
 import com.charlie.morerecipes.domain.UnitOfMeasure;
@@ -36,6 +33,7 @@ public class IngredientServiceImplTest {
 
     private IngredientToIngredientCommand ingredientToIngredientCommand;
     private IngredientCommandToIngredient ingredientCommandToIngredient;
+    private RecipeToRecipeCommand recipeToRecipeCommand;
 
     @Before
     public void setUp() throws Exception {
@@ -44,8 +42,9 @@ public class IngredientServiceImplTest {
                 new IngredientToIngredientCommand(new UnitOfMeasureToUnitOfMeasureCommand());
         this.ingredientCommandToIngredient =
                 new IngredientCommandToIngredient(new UnitOfMeasureCommandToUnitOfMeasure());
-        ingredientService = new IngredientServiceImpl(recipeRepository,ingredientToIngredientCommand,
-                ingredientCommandToIngredient,unitOfMeasureRepository);
+        this.recipeToRecipeCommand = new RecipeToRecipeCommand(new NotesToNotesCommand(),new CategoryToCategoryCommand(),ingredientToIngredientCommand);
+        this.ingredientService = new IngredientServiceImpl(recipeRepository,ingredientToIngredientCommand,
+                ingredientCommandToIngredient,unitOfMeasureRepository,recipeToRecipeCommand);
     }
 
     @Test
@@ -102,6 +101,23 @@ public class IngredientServiceImplTest {
         IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command);
 
         assertEquals(Long.valueOf(3L),savedCommand.getId());
+        verify(recipeRepository,times(1)).findById(anyLong());
+        verify(recipeRepository,times(1)).save(any(Recipe.class));
+    }
+
+    @Test
+    public void testDeleteById() throws Exception {
+        // given
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        Ingredient ingredient = new Ingredient();
+        ingredient.setId(2L);
+        recipe.getIngredients().add(ingredient);
+        Optional<Recipe> optionalRecipe = Optional.of(recipe);
+        when(recipeRepository.findById(anyLong())).thenReturn(optionalRecipe);
+        // when
+        ingredientService.deleteById(recipe.getId(),ingredient.getId());
+        // then
         verify(recipeRepository,times(1)).findById(anyLong());
         verify(recipeRepository,times(1)).save(any(Recipe.class));
     }

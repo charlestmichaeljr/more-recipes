@@ -68,7 +68,7 @@ public class IngredientController {
     }
 
     @RequestMapping(value = "/recipe/{recipeId}/ingredient/new",method = RequestMethod.GET)
-    public String newRecipe(@PathVariable String recipeId, Model model) {
+    public String newIngredient(@PathVariable String recipeId, Model model) {
         RecipeCommand recipeCommand = recipeService.findCommandById(Long.valueOf(recipeId));
 
         IngredientCommand ingredientCommand = new IngredientCommand();
@@ -81,6 +81,12 @@ public class IngredientController {
         model.addAttribute("uomList",uoms);
 
         return "/recipe/ingredient/ingredientform";
+    }
+
+    @RequestMapping(value = "/recipe/{recipeId}/ingredient/{ingredientId}/delete")
+    public String deleteIngredient(@PathVariable String recipeId, @PathVariable String ingredientId) {
+        ingredientService.deleteById(Long.valueOf(recipeId),Long.valueOf(ingredientId));
+        return "redirect:/recipe/" + Long.valueOf(recipeId) + "/ingredients";
     }
 
 
