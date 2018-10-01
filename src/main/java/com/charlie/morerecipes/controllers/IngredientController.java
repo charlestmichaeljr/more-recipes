@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.io.IOException;
 import java.util.Set;
 
 @Slf4j
@@ -32,7 +33,7 @@ public class IngredientController {
     }
 
     @RequestMapping("/recipe/{recipeId}/ingredients")
-    public String listIngredients(@PathVariable String recipeId, Model model) {
+    public String listIngredients(@PathVariable String recipeId, Model model) throws IOException {
         RecipeCommand returnedRecipe = recipeService.findCommandById(Long.valueOf(recipeId));
         model.addAttribute("recipe",returnedRecipe);
         return "/recipe/ingredient/list";
@@ -68,7 +69,7 @@ public class IngredientController {
     }
 
     @RequestMapping(value = "/recipe/{recipeId}/ingredient/new",method = RequestMethod.GET)
-    public String newIngredient(@PathVariable String recipeId, Model model) {
+    public String newIngredient(@PathVariable String recipeId, Model model) throws IOException{
         RecipeCommand recipeCommand = recipeService.findCommandById(Long.valueOf(recipeId));
 
         IngredientCommand ingredientCommand = new IngredientCommand();

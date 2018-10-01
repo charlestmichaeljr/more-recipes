@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.com">
 <head>
     <meta charset="UTF-8">
-    <title th:text="Upload an Image">Title</title>
+    <title th:text="'Upload an Image'">Title</title>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -33,7 +33,7 @@
                             <div class="col-md-5">
                                 <form action="http://localhost" method="post"
                                       enctype="multipart/form-data"
-                                      th:action="@{'/recipe/' + ${recipe.id} + '/image'">
+                                      th:action="@{'/recipe/' + ${recipe.id} + '/image'}">
                                     <label class="control-label">
                                         Select File
                                     </label>

@@ -1,14 +1,18 @@
 package com.charlie.morerecipes.controllers;
 
 import com.charlie.morerecipes.commands.RecipeCommand;
-import com.charlie.morerecipes.domain.Recipe;
+import com.charlie.morerecipes.exceptions.NotFoundException;
 import com.charlie.morerecipes.services.RecipeService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Optional;
+import java.io.IOException;
 
+@Slf4j
 @Controller
 public class RecipeController {
 
@@ -19,9 +23,11 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @RequestMapping(value = "/recipe/{id}/show",method = RequestMethod.GET)
+    @GetMapping
+    @RequestMapping(value = "/recipe/{id}/show")
     public String getRecipeById(@PathVariable String id, Model model) {
-        model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(id)));
+        RecipeCommand recipeCommand = recipeService.findCommandById(Long.valueOf(id));
+        model.addAttribute("recipe", recipeCommand);
         return "/recipe/show";
     }
 
@@ -39,14 +45,39 @@ public class RecipeController {
     }
 
     @RequestMapping("/recipe/{id}/update")
-    public String getRecipeUpdateForm(@PathVariable String id,Model model) {
+    public String getRecipeUpdateForm(@PathVariable String id,Model model) throws IOException {
         model.addAttribute("recipe",recipeService.findCommandById(Long.valueOf(id)));
         return  "/recipe/recipeform";
     }
 
     @RequestMapping("/recipe/{id}/delete")
-    public String deleteRecipeById(@PathVariable Long id) {
-        recipeService.deleteById(id);
+    public String deleteRecipeById(@PathVariable String id) {
+        recipeService.deleteById(Long.valueOf(id));
         return "redirect:/";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public ModelAndView handleNotFound(Exception e) {
+        log.error("Handling not found error");
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.getModel().put("errorMessage",e.getMessage());
+        modelAndView.setViewName("404error");
+
+        return modelAndView;
+
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NumberFormatException.class)
+    public ModelAndView handleNumberFormatError(Exception e) {
+        log.error("Handling numberFormat exception");
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("400error");
+        modelAndView.addObject("errorMessage",e.getMessage());
+
+        return modelAndView;
     }
 }

@@ -4,6 +4,7 @@ import com.charlie.morerecipes.commands.RecipeCommand;
 import com.charlie.morerecipes.converters.RecipeCommandToRecipe;
 import com.charlie.morerecipes.converters.RecipeToRecipeCommand;
 import com.charlie.morerecipes.domain.Recipe;
+import com.charlie.morerecipes.exceptions.NotFoundException;
 import com.charlie.morerecipes.repositories.RecipeRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,6 +99,17 @@ public class RecipeServiceImplTest {
         recipeService.deleteById(id);
         // then
         verify(recipeRepository,times(1)).deleteById(anyLong());
+
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void getRecipeByIdTestNotFound() throws Exception {
+        Optional<Recipe> recipeOptional = Optional.empty();
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        Recipe recipeCommand = recipeService.findById(3L);
+
 
     }
 }
