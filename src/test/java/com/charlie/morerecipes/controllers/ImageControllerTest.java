@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -42,7 +43,8 @@ public class ImageControllerTest {
         MockitoAnnotations.initMocks(this);
         imageController = new ImageController(imageService, recipeService);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(imageController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(imageController)
+                .setControllerAdvice(new ControllerExceptionHandler()).build();
     }
 
     @Test
@@ -101,5 +103,17 @@ public class ImageControllerTest {
         // then
         assertEquals(bytesBoxed.length, responseBytes.length);
         verify(recipeService, times(1)).findCommandById(anyLong());
+    }
+
+    @Test
+    public void testPostImageNumberFormatException() throws  Exception{
+
+        // given
+        MockMultipartFile multipartFile = new MockMultipartFile("imagefile", "testing.txt",
+                "text/plain", "Charlie is the greatest!".getBytes());
+        // then
+        mockMvc.perform(multipart("/recipe/abcd/image").file(multipartFile))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("400error"));
     }
 }

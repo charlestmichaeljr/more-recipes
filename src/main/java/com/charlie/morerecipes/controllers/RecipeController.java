@@ -3,13 +3,16 @@ package com.charlie.morerecipes.controllers;
 import com.charlie.morerecipes.commands.RecipeCommand;
 import com.charlie.morerecipes.exceptions.NotFoundException;
 import com.charlie.morerecipes.services.RecipeService;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @Slf4j
@@ -17,6 +20,8 @@ import java.io.IOException;
 public class RecipeController {
 
     private final RecipeService recipeService;
+
+    private static final String RECIPE_RECIPEFORM_URL = "/recipe/recipeform";
 
 
     public RecipeController(RecipeService recipeService) {
@@ -34,12 +39,20 @@ public class RecipeController {
     @RequestMapping("/recipe/new")
     public String newRecipe(Model model) {
         model.addAttribute("recipe",new RecipeCommand());
-        return "/recipe/recipeform";
+        return RECIPE_RECIPEFORM_URL;
     }
 
     @RequestMapping(value="/recipe",method = RequestMethod.POST)
-    public String saveOrUpdate(@ModelAttribute RecipeCommand recipeCommand) {
+    public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand recipeCommand, BindingResult bindingResult) {
+
+        if(bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(objectError -> {log.debug(objectError.toString());});
+
+            return RECIPE_RECIPEFORM_URL;
+        }
+
         RecipeCommand savedRecipe = recipeService.saveRecipeCommand(recipeCommand);
+
 
         return "redirect:/recipe/" + savedRecipe.getId() + "/show" ;
     }
@@ -67,17 +80,5 @@ public class RecipeController {
 
         return modelAndView;
 
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NumberFormatException.class)
-    public ModelAndView handleNumberFormatError(Exception e) {
-        log.error("Handling numberFormat exception");
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("400error");
-        modelAndView.addObject("errorMessage",e.getMessage());
-
-        return modelAndView;
     }
 }

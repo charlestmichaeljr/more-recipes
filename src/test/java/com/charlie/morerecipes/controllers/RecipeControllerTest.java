@@ -34,7 +34,9 @@ public class RecipeControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         recipeController = new RecipeController(recipeService);
-        mockMvc = MockMvcBuilders.standaloneSetup(recipeController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(recipeController)
+                .setControllerAdvice(new ControllerExceptionHandler())
+                .build();
     }
 
     @Test
@@ -61,6 +63,41 @@ public class RecipeControllerTest {
     }
 
     @Test
+    public void testPostNewRecipeForm() throws Exception {
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(2L);
+
+        when(recipeService.saveRecipeCommand(any(RecipeCommand.class))).thenReturn(recipeCommand);
+
+        mockMvc.perform(post("/recipe")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", "")
+                .param("description", "some string")
+                .param("prepTime", "30")
+                .param("cookTime", "45")
+                .param("servings", "3")
+                .param("url", "http://www.microsoft.com")
+                .param("directions", "stir it up"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/recipe/2/show"));
+    }
+
+    @Test
+    public void testPostNewRecipeFormValidationFail() throws Exception {
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(2L);
+
+        when(recipeService.saveRecipeCommand(any(RecipeCommand.class))).thenReturn(recipeCommand);
+
+        mockMvc.perform(post("/recipe")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", "")
+                .param("cookTime", "3000"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/recipe/recipeform"));
+    }
+
+    @Test
     public void testSaveRecipeFormData() throws Exception {
 
         RecipeCommand recipeCommand = new RecipeCommand();
@@ -71,8 +108,12 @@ public class RecipeControllerTest {
         mockMvc.perform(post("/recipe/")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("id", "")
-                .param("description", "Ketchup")
-        )
+                .param("description", "some string")
+                .param("prepTime", "30")
+                .param("cookTime", "45")
+                .param("servings", "3")
+                .param("url", "http://www.microsoft.com")
+                .param("directions", "stir it up"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/recipe/2/show"));
     }
